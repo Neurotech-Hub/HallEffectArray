@@ -1,4 +1,4 @@
-function [fitresult, gof] = smooothSpline(x, y)
+function [fitresult, gof] = smoothSpline(x, y)
 %% Fit: 'untitled fit 1'.
 [xData, yData] = prepareCurveData( x, y );
 
