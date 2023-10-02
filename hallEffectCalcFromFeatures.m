@@ -1,7 +1,5 @@
 function [mm,k,err] = hallEffectCalcFromFeatures(sensorData,trainingData)
 doPlot = true;
-% trainingData = readmatrix('/Users/mattgaidica/Library/CloudStorage/Box-Box/Neurotech Hub/Projects/TubeTrode/tubeTrode_ZAxisTest.csv');
-% % sensorData = trainingData(50,2:5); % !!RM
 % % mmHistory = 51;
 trainingFeatures = hallFeatures(trainingData(:,2:5));
 sensorFeatures = hallFeatures(sensorData);
@@ -23,12 +21,11 @@ mm = trainingData(k,1);
 % % end
 
 if doPlot
-    lColors = lines(5);
     rows = 3;
     cols = 5;
     % close all;
     % figure('Position',[0 0 800 700]);
-    set(gcf,'color','w');
+    % set(gcf,'color','w');
     subplot(rows,cols,1:5);
     plot(trainingData(:,1),trainingData(:,2:5),'linewidth',2);
     title("Training Data");
@@ -36,6 +33,9 @@ if doPlot
     xlim([min(trainingData(:,1)),max(trainingData(:,1))]);
     xlabel('mm');
     ylabel("sensor (V)");
+    hold on;
+    xline(trainingData(k,1),'r-','LineWidth',2);
+    hold off;
     grid on;
 
     subplot(rows,cols,7:8);
@@ -60,7 +60,7 @@ if doPlot
     subplot(rows,cols,9:10);
     imagesc(sensorFeatureDiff');
     set(gca,'ydir','normal');
-    colormap(magma);
+    colormap(jet);
     colorbar;
     title("Sensors-Features [abs(diff)]");
     xlabel("mm");

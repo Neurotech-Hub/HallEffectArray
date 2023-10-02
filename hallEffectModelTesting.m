@@ -1,59 +1,45 @@
-trainingData = readmatrix('/Users/mattgaidica/Library/CloudStorage/Box-Box/Neurotech Hub/Projects/TubeTrode/tubeTrode_ZAxisTest.csv');
+load("trainingData.mat");
 % sensorData = trainingData(5,2:5);
-
+selectedPort = "/dev/cu.usbmodem111301"; % serialportlist
 close all;
 clc;
-% Get a list of available serial ports
-availablePorts = serialportlist;
 % Define the serial port settings
 baudRate = 115200;
 % Define the format of the data you expect (assuming 4 float values)
 dataFormat = '%f\t%f\t%f\t%f';
-% Specify the number of values you expect to read at once (4 in this case)
 numValues = 4;
 
-if isempty(availablePorts)
-    disp('No active COM ports found.');
-else
-    % Display available COM ports
-    fprintf('Available COM Ports:\n');
-    for i = 1:numel(availablePorts)
-        fprintf('%d. %s\n', i, availablePorts{i});
-    end
-    % Prompt the user to select a COM port
-    selectedPortIndex = input('Enter the number of the COM port to use: ');
+fprintf('Selected COM Port: %s\n', selectedPort);
+try
+    s = serialport(selectedPort,baudRate);
+catch
+    delete(s);
+    clear s;
+    s = serialport(selectedPort,baudRate);
+end
 
-    % Validate the user's input
-    if selectedPortIndex >= 1 && selectedPortIndex <= numel(availablePorts)
-        selectedPort = availablePorts{selectedPortIndex};
-        fprintf('Selected COM Port: %s\n', selectedPort);
-        % figure('Position',[0 0 800 700]);
-        try
-            s = serialport(selectedPort,baudRate);
-            while(true)
-                % if kbhit(1)
-                %     % break;
-                % end
-                % while isvalid(s)
-                %     % Read data from the serial port
-                %     data = read(s, dataFormat, numValues);
-                %     % Check if the correct number of values was read
-                %     if numel(data) == numValues
-                %         % Process the data as needed
-                %         disp(data);
-                %         % [mm,k,err] =
-                %         % hallEffectCalcFromFeatures(sensorData,trainingData);
-                %     end
-                % end
-            end
-        catch
-            disp('Error with serial port.');
+figure('Position',[0 0 800 700]);
+ButtonHandle = uicontrol('Style', 'PushButton', ...
+                         'String', 'Stop loop', ...
+                         'Callback', 'delete(gcbf)');
+
+while(ishandle(ButtonHandle))
+    if isvalid(s)
+        % Read data from the serial port
+        % data = read(s, dataFormat, numValues);
+        dataString = readline(s);
+        dataValues = strsplit(dataString,'\t');    % split at tab characters
+        % Check if the correct number of values was read
+        if numel(dataValues) == numValues
+            sensorData = cellfun(@str2double, dataValues); % convert each split string to double
+            [mm,k,err] = hallEffectCalcFromFeatures(sensorData,trainingData);
+            % pause(0.5);
+            drawnow;
         end
-
-        % Close and clean up the serial port
-        delete(s);
-        clear s;
-    else
-        disp('Invalid selection. Please choose a valid COM port.');
     end
 end
+
+% Close and clean up the serial port
+close all;
+delete(s);
+clear s;
