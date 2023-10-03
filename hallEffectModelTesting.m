@@ -1,5 +1,6 @@
 load("trainingData.mat");
-% sensorData = trainingData(5,2:5);
+% [trainedModel, validationRMSE] = trainRegressionModel(trainingData);
+
 selectedPort = "/dev/cu.usbmodem111301"; % serialportlist
 close all;
 clc;
@@ -33,7 +34,7 @@ while(ishandle(ButtonHandle))
         if numel(dataValues) == numValues
             sensorData = cellfun(@str2double, dataValues); % convert each split string to double
             [mm,k,err] = hallEffectCalcFromFeatures(sensorData,trainingData);
-            % pause(0.5);
+            % disp(trainedModel.predictFcn(sensorData));
             drawnow;
         end
     end
