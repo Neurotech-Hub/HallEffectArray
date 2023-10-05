@@ -1,4 +1,4 @@
-load("trainingData.mat");
+load("trainingData2.mat");
 % [trainedModel, validationRMSE] = trainRegressionModel(trainingData);
 
 selectedPort = "/dev/cu.usbmodem111301"; % serialportlist
@@ -7,8 +7,12 @@ clc;
 % Define the serial port settings
 baudRate = 115200;
 % Define the format of the data you expect (assuming 4 float values)
-dataFormat = '%f\t%f\t%f\t%f';
-numValues = 4;
+numValues = 8;
+if numValues == 4
+    dataFormat = '%f\t%f\t%f\t%f\t';
+else
+    dataFormat = '%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t';
+end
 
 fprintf('Selected COM Port: %s\n', selectedPort);
 try
@@ -30,6 +34,7 @@ while(ishandle(ButtonHandle))
         % data = read(s, dataFormat, numValues);
         dataString = readline(s);
         dataValues = strsplit(dataString,'\t');    % split at tab characters
+        dataValues = dataValues(1:end-1); % !! last tab character
         % Check if the correct number of values was read
         if numel(dataValues) == numValues
             sensorData = cellfun(@str2double, dataValues); % convert each split string to double

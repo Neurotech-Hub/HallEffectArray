@@ -1,11 +1,11 @@
 function [mm,k,err] = hallEffectCalcFromFeatures(sensorData,trainingData)
 doPlot = true;
 % % mmHistory = 51;
-trainingFeatures = hallFeatures(trainingData(:,2:5));
+trainingFeatures = hallFeatures(trainingData(:,2:end));
 sensorFeatures = hallFeatures(sensorData);
 
 searchArr = NaN(height(trainingData),1);
-sensorFeatureDiff = NaN(height(trainingData),6);
+sensorFeatureDiff = NaN(height(trainingData),width(trainingFeatures));
 for ii = 1:height(trainingFeatures)
     sensorFeatureDiff(ii,:) = abs(sensorFeatures-trainingFeatures(ii,:));
     searchArr(ii) = sum(sensorFeatureDiff(ii,:));
@@ -27,9 +27,9 @@ if doPlot
     % figure('Position',[0 0 800 700]);
     % set(gcf,'color','w');
     subplot(rows,cols,1:5);
-    plot(trainingData(:,1),trainingData(:,2:5),'linewidth',2);
+    plot(trainingData(:,1),trainingData(:,2:end),'linewidth',2);
     title("Training Data");
-    legend(compose("S%i",1:4),'autoupdate','off');
+    legend(compose("S%i",1:width(trainingData)-1),'autoupdate','off');
     xlim([min(trainingData(:,1)),max(trainingData(:,1))]);
     xlabel('mm');
     ylabel("sensor (V)");
@@ -66,16 +66,16 @@ if doPlot
     xlabel("mm");
 
     subplot(rows,cols,11:15);
-    imagesc(trainingData(:,1),1,searchArr');
-    yticks([]);
-    ylabel("sum(abs(diff))");
+    % imagesc(trainingData(:,1),linspace(0,1,numel(searchArr)),searchArr');
+    % yticks([]);
+    % ylabel("sum(abs(diff))");
 
     yyaxis right;
     plot(trainingData(:,1),searchArr,'k-','linewidth',2);
     title("Lookup Search");
-    xlim([min(trainingData(:,1)),max(trainingData(:,1))]);
+    % xlim([min(trainingData(:,1)),max(trainingData(:,1))]);
     xlabel('mm');
     xline(trainingData(k,1),'r-','LineWidth',2);
-    xlim([min(trainingData(:,1)),max(trainingData(:,1))]);
+    % xlim([min(trainingData(:,1)),max(trainingData(:,1))]);
     yticks([]);
 end

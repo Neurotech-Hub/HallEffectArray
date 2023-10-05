@@ -1,9 +1,10 @@
 function feats = hallFeatures(data)
-feats = NaN(height(data),6); % pairwise features
+% feats = NaN(height(data),6); % pairwise features
+feats = [];
 for iTrain = 1:height(data)
     iFeat = 1;
-    for ii = 1:4
-        for jj = ii:4
+    for ii = 1:width(data)-1
+        for jj = ii:width(data)-1
             if ii == jj
                 continue;
             end
