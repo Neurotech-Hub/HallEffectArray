@@ -9,7 +9,7 @@ for iTrain = 1:height(data)
                 continue;
             end
             % fprintf("%i-%i\n",ii,jj);
-            feats(iTrain,iFeat) = data(iTrain,ii) / data(iTrain,jj);
+            feats(iTrain,iFeat) = 1 - (data(iTrain,ii) / data(iTrain,jj));
             iFeat = iFeat + 1;
         end
     end

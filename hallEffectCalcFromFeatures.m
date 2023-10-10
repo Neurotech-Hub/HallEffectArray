@@ -8,9 +8,14 @@ searchArr = NaN(height(trainingData),1);
 sensorFeatureDiff = NaN(height(trainingData),width(trainingFeatures));
 for ii = 1:height(trainingFeatures)
     sensorFeatureDiff(ii,:) = abs(sensorFeatures-trainingFeatures(ii,:));
-    searchArr(ii) = sum(sensorFeatureDiff(ii,:));
+    % searchArr(ii) = sum(sensorFeatureDiff(ii,:));
 end
 
+sensorDiff = abs(trainingData(:,2:9)-sensorData);
+% [~,multMask] = sort(sensorData);
+% multMask = (numel(sensorData)-multMask); % shape for multiplication
+searchArr = sum(sensorDiff,2).^2;
+searchArr = smoothdata(searchArr,'gaussian',10);
 [err,k] = min(searchArr);
 mm = trainingData(k,1);
 
@@ -66,16 +71,18 @@ if doPlot
     xlabel("mm");
 
     subplot(rows,cols,11:15);
-    % imagesc(trainingData(:,1),linspace(0,1,numel(searchArr)),searchArr');
-    % yticks([]);
-    % ylabel("sum(abs(diff))");
 
     yyaxis right;
     plot(trainingData(:,1),searchArr,'k-','linewidth',2);
-    title("Lookup Search");
-    % xlim([min(trainingData(:,1)),max(trainingData(:,1))]);
+    title("Lookup Search (find minimum)");
     xlabel('mm');
     xline(trainingData(k,1),'r-','LineWidth',2);
-    % xlim([min(trainingData(:,1)),max(trainingData(:,1))]);
+    xlim([min(trainingData(:,1)),max(trainingData(:,1))]);
     yticks([]);
+
+    yyaxis left;
+    imagesc(trainingData(:,1),[0,1],searchArr');
+    yticks([]);
+    ylabel("sum(abs(diff))");
+    drawnow;
 end
