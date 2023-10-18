@@ -11,7 +11,7 @@ for ii = 1:height(trainingFeatures)
     % searchArr(ii) = sum(sensorFeatureDiff(ii,:));
 end
 
-sensorDiff = abs(trainingData(:,2:9)-sensorData);
+sensorDiff = abs(trainingData(:,2:end)-sensorData);
 % [~,multMask] = sort(sensorData);
 % multMask = (numel(sensorData)-multMask); % shape for multiplication
 searchArr = sum(sensorDiff,2).^2;
