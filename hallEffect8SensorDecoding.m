@@ -11,6 +11,8 @@ for ii = 1:width(trainingNorm)
 end
 
 selectedPort = "/dev/cu.usbmodem111301"; % serialportlist
+selectedPort = "/dev/cu.usbmodem111201";
+
 close all;
 clc;
 
